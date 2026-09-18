@@ -1,0 +1,21 @@
+module half_subtractor(a, b, diff, borrow);
+    input a, b;
+    output diff, borrow;
+    assign diff   = a ^ b;
+    assign borrow = (~a) & b;
+endmodule
+
+TB:
+module tb_half_subtractor;
+    reg a, b;
+    wire diff, borrow;
+    half_subtractor uut(a, b, diff, borrow);
+    initial begin
+        a=0; b=0;
+        #10 a=0; b=1;
+        #10 a=1; b=0;
+        #10 a=1; b=1;
+        #10 $finish;
+    end
+    initial $monitor("a=%b b=%b | diff=%b borrow=%b", a, b, diff, borrow);
+endmodule
