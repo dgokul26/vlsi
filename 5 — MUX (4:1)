@@ -1,0 +1,26 @@
+4:1 Multiplexer
+module mux4to1(i0, i1, i2, i3, s0, s1, y);
+    input i0, i1, i2, i3, s0, s1;
+    output y;
+    assign y = (~s1 & ~s0 & i0) |
+               (~s1 &  s0 & i1) |
+               ( s1 & ~s0 & i2) |
+               ( s1 &  s0 & i3);
+endmodule
+
+TB:
+module tb_mux4to1;
+    reg i0, i1, i2, i3, s0, s1;
+    wire y;
+    mux4to1 uut(i0, i1, i2, i3, s0, s1, y);
+    initial begin
+        i0=1; i1=0; i2=1; i3=0;
+        s0=0; s1=0;
+        #10 {s1,s0} = 2'b00;
+        #10 {s1,s0} = 2'b01;
+        #10 {s1,s0} = 2'b10;
+        #10 {s1,s0} = 2'b11;
+        #10 $finish;
+    end
+    initial $monitor("s1=%b s0=%b | y=%b", s1, s0, y);
+endmodule
