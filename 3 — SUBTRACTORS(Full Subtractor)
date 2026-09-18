@@ -1,0 +1,24 @@
+module full_subtractor(a, b, bin, diff, bout);
+    input a, b, bin;
+    output reg diff, bout;
+    always @(a or b or bin) begin
+        diff = a ^ b ^ bin;
+        bout = ((~a) & b) | (b & bin) | (bin & (~a));
+    end
+endmodule
+
+TB:
+module tb_full_subtractor;
+    reg a, b, bin;
+    wire diff, bout;
+    full_subtractor uut(a, b, bin, diff, bout);
+    integer i;
+    initial begin
+        {a,b,bin} = 3'b000;
+        for (i=0; i<8; i=i+1) begin
+            #10 {a,b,bin} = i;
+        end
+        #10 $finish;
+    end
+    initial $monitor("a=%b b=%b bin=%b | diff=%b bout=%b", a, b, bin, diff, bout);
+endmodule
