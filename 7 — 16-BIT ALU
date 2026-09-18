@@ -1,0 +1,48 @@
+module alu16(clk, rst, a, b, opcode, z);
+    input clk, rst;
+    input [15:0] a, b;
+    input [2:0] opcode;
+    output reg [15:0] z;
+    always @(posedge clk or negedge rst) begin
+        if (!rst)
+            z <= 16'b0;
+        else begin
+            case (opcode)
+                3'd0: z <= a + b;
+                3'd1: z <= a - b;
+                3'd2: z <= a * b;
+                3'd3: z <= a / b;
+                3'd4: z <= a & b;
+                3'd5: z <= a | b;
+                3'd6: z <= a ^ b;
+                3'd7: z <= ~a;
+            endcase
+        end
+    end
+endmodule
+
+TB:
+module tb_alu16;
+    reg clk, rst;
+    reg [15:0] a, b;
+    reg [2:0] opcode;
+    wire [15:0] z;
+    alu16 uut(clk, rst, a, b, opcode, z);
+
+    always #5 clk = ~clk;
+
+    initial begin
+        clk = 0; rst = 0; a = 16'd20; b = 16'd5; opcode = 0;
+        #10 rst = 1;
+        opcode = 0; #10;
+        opcode = 1; #10;
+        opcode = 2; #10;
+        opcode = 3; #10;
+        opcode = 4; #10;
+        opcode = 5; #10;
+        opcode = 6; #10;
+        opcode = 7; #10;
+        $finish;
+    end
+    initial $monitor("op=%d a=%d b=%d | z=%d", opcode, a, b, z);
+endmodule
