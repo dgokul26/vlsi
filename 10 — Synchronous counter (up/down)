@@ -1,0 +1,27 @@
+module sync_counter(clk, rst, up_down, out);
+    input clk, rst, up_down;
+    output reg [3:0] out;
+    always @(posedge clk or negedge rst) begin
+        if (!rst)
+            out <= 4'b0000;
+        else if (up_down)
+            out <= out - 1'b1;   // down count
+        else
+            out <= out + 1'b1;   // up count
+    end
+endmodule
+
+TB:      
+module tb_sync_counter;
+    reg clk, rst, up_down;
+    wire [3:0] out;
+    sync_counter uut(clk, rst, up_down, out);
+    always #5 clk = ~clk;
+    initial begin
+        clk=0; rst=0; up_down=0;
+        #10 rst=1;
+        #80 up_down=1;
+        #80 $finish;
+    end
+    initial $monitor("t=%0t | out=%b", $time, out);
+endmodule
