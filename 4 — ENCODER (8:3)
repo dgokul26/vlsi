@@ -1,0 +1,26 @@
+module encoder8to3(y, a, b, c);
+    input [7:0] y;
+    output a, b, c;
+    or(a, y[4], y[5], y[6], y[7]);
+    or(b, y[2], y[3], y[6], y[7]);
+    or(c, y[1], y[3], y[5], y[7]);
+endmodule
+
+TB:
+module tb_encoder8to3;
+    reg [7:0] y;
+    wire a, b, c;
+    encoder8to3 uut(y, a, b, c);
+    initial begin
+        y = 8'b00000000;
+        #10 y = 8'b00000010; // D1
+        #10 y = 8'b00000100; // D2
+        #10 y = 8'b00001000; // D3
+        #10 y = 8'b00010000; // D4
+        #10 y = 8'b00100000; // D5
+        #10 y = 8'b01000000; // D6
+        #10 y = 8'b10000000; // D7
+        #10 $finish;
+    end
+    initial $monitor("y=%b | a=%b b=%b c=%b", y, a, b, c);
+endmodule
