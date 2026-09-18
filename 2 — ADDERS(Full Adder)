@@ -1,0 +1,24 @@
+module full_adder(a, b, cin, sum, carry);
+    input a, b, cin;
+    output reg sum, carry;
+    always @(a or b or cin) begin
+        sum   = a ^ b ^ cin;
+        carry = (a & b) | (b & cin) | (cin & a);
+    end
+endmodule
+
+TB:
+module tb_full_adder;
+    reg a, b, cin;
+    wire sum, carry;
+    full_adder uut(a, b, cin, sum, carry);
+    integer i;
+    initial begin
+        {a,b,cin} = 3'b000;
+        for (i=0; i<8; i=i+1) begin
+            #10 {a,b,cin} = i;
+        end
+        #10 $finish;
+    end
+    initial $monitor("a=%b b=%b cin=%b | sum=%b carry=%b", a, b, cin, sum, carry);
+endmodule
