@@ -1,0 +1,47 @@
+ASYNCHRONOUS COUNTER:
+
+module d_ff_async(q, d, clk, reset);
+    output reg q;
+    input d, clk, reset;
+    always @(posedge reset or negedge clk)
+        if (reset) q = 1'b0;
+        else       q = d;
+endmodule
+
+TB:
+module t_ff_async(q, clk, reset);
+    output q;
+    input clk, reset;
+    wire d;
+    d_ff_async dff0(q, d, clk, reset);
+    not n1(d, q);
+endmodule
+
+
+
+
+
+Ripple counter:
+
+module ripple_counter(q, clk, reset);
+    output [3:0] q;
+    input clk, reset;
+    t_ff_async tff0(q[0], clk, reset);
+    t_ff_async tff1(q[1], q[0], reset);
+    t_ff_async tff2(q[2], q[1], reset);
+    t_ff_async tff3(q[3], q[2], reset);
+endmodule
+
+TB:
+module tb_ripple_counter;
+    reg clk, reset;
+    wire [3:0] q;
+    ripple_counter uut(q, clk, reset);
+    always #5 clk = ~clk;
+    initial begin
+        clk=0; reset=1;
+        #10 reset=0;
+        #200 $finish;
+    end
+    initial $monitor("t=%0t | q=%b", $time, q);
+endmodule
