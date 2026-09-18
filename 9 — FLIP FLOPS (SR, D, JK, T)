@@ -1,0 +1,129 @@
+SR Flip Flop:
+module sr_ff(s, r, clk, rst, q);
+    input s, r, clk, rst;
+    output reg q;
+    always @(posedge clk or negedge rst) begin
+        if (!rst)
+            q <= 0;
+        else begin
+            case ({s,r})
+                2'b00: q <= q;
+                2'b01: q <= 0;
+                2'b10: q <= 1;
+                2'b11: q <= 1'bx; // invalid state
+            endcase
+        end
+    end
+endmodule
+
+TB:
+module tb_sr_ff;
+    reg s, r, clk, rst;
+    wire q;
+    sr_ff uut(s, r, clk, rst, q);
+    always #5 clk = ~clk;
+    initial begin
+        clk=0; rst=0; s=0; r=0;
+        #10 rst=1;
+        #10 s=1; r=0;
+        #10 s=0; r=0;
+        #10 s=0; r=1;
+        #10 s=0; r=0;
+        #10 $finish;
+    end
+    initial $monitor("s=%b r=%b | q=%b", s, r, q);
+endmodule
+
+
+D Flip Flop:
+module d_ff(d, rst, clk, q);
+    input d, rst, clk;
+    output reg q;
+    always @(posedge clk or negedge rst) begin
+        if (rst == 0)
+            q <= 1'b0;
+        else
+            q <= d;
+    end
+endmodule
+
+TB:
+module tb_d_ff;
+    reg d, rst, clk;
+    wire q;
+    d_ff uut(d, rst, clk, q);
+    always #5 clk = ~clk;
+    initial begin
+        clk=0; rst=0; d=0;
+        #10 rst=1;
+        #10 d=1;
+        #10 d=0;
+        #10 d=1;
+        #10 $finish;
+    end
+    initial $monitor("d=%b | q=%b", d, q);
+endmodule
+
+
+JK Flip Flop:
+module jk_ff(j, k, clk, rst, q);
+    input j, k, clk, rst;
+    output reg q;
+    always @(posedge clk or negedge rst) begin
+        if (!rst)
+            q <= 0;
+        else begin
+            case ({j,k})
+                2'b00: q <= q;
+                2'b01: q <= 0;
+                2'b10: q <= 1;
+                2'b11: q <= ~q;
+            endcase
+        end
+    end
+endmodule
+
+TB:
+module tb_jk_ff;
+    reg j, k, clk, rst;
+    wire q;
+    jk_ff uut(j, k, clk, rst, q);
+    always #5 clk = ~clk;
+    initial begin
+        clk=0; rst=0; j=0; k=0;
+        #10 rst=1;
+        #10 j=1; k=0;
+        #10 j=0; k=1;
+        #10 j=1; k=1;
+        #10 j=1; k=1;
+        #10 $finish;
+    end
+    initial $monitor("j=%b k=%b | q=%b", j, k, q);
+endmodule
+
+
+T Flip Flop:
+module t_ff(t, rst, clk, q);
+    input t, rst, clk;
+    output reg q;
+    always @(posedge clk or negedge rst) begin
+        if (rst == 0)
+            q <= 1'b0;
+        else
+            q <= q ^ t;
+    end
+endmodule
+
+TB:
+module tb_t_ff;
+    reg t, rst, clk;
+    wire q;
+    t_ff uut(t, rst, clk, q);
+    always #5 clk = ~clk;
+    initial begin
+        clk=0; rst=0; t=1;
+        #10 rst=1;
+        #100 $finish;
+    end
+    initial $monitor("t=%b | q=%b", t, q);
+endmodule
